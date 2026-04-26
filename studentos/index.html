@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>StudentOS — Your College Life System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: #111118;
+  --bg3: #1a1a24;
+  --bg4: #22222f;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #f0f0f5;
+  --text2: #9999aa;
+  --text3: #55556a;
+  --accent: #7c6dfa;
+  --accent2: #a599ff;
+  --teal: #2dd4a0;
+  --coral: #ff6b6b;
+  --amber: #fbbf24;
+  --pink: #f472b6;
+  --green: #4ade80;
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --r: 12px;
+  --r2: 18px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: var(--font-body); }
+
+/* ── NOISE OVERLAY ─────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* ── NAV ───────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem; height: 60px;
+  background: rgba(10,10,15,0.8);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: var(--font-head);
+  font-weight: 800; font-size: 18px;
+  letter-spacing: -0.03em;
+}
+.nav-logo span { color: var(--accent); }
+.nav-links {
+  display: flex; gap: 2rem; list-style: none;
+}
+.nav-links a {
+  font-size: 13px; color: var(--text2);
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 8px;
+  padding: 8px 18px; font-size: 13px; font-weight: 500;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.nav-cta:hover { opacity: 0.88; transform: translateY(-1px); }
+
+/* ── HERO ───────────────────────────────────────── */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  justify-content: center; flex-direction: column;
+  text-align: center; padding: 100px 2rem 80px;
+  position: relative;
+}
+.hero-glow {
+  position: absolute; width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(124,109,250,0.15) 0%, transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%, -60%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: 999px; padding: 6px 16px;
+  font-size: 12px; font-weight: 500; color: var(--accent2);
+  margin-bottom: 2rem;
+  animation: fadeUp 0.6s ease both;
+}
+.hero-badge-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+.hero h1 {
+  font-family: var(--font-head);
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  font-weight: 800; line-height: 1.05;
+  letter-spacing: -0.04em;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+.hero h1 .grad {
+  background: linear-gradient(135deg, var(--accent2), var(--teal));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-sub {
+  max-width: 560px; margin: 1.5rem auto 0;
+  color: var(--text2); font-size: 16px; line-height: 1.7;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+.hero-actions {
+  display: flex; gap: 12px; margin-top: 2.5rem; justify-content: center; flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+.btn-primary {
+  background: var(--accent); color: #fff;
+  border: none; border-radius: var(--r); padding: 14px 28px;
+  font-size: 15px; font-weight: 500;
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,109,250,0.35); }
+.btn-outline {
+  background: transparent; color: var(--text2);
+  border: 1px solid var(--border2); border-radius: var(--r); padding: 14px 28px;
+  font-size: 15px; font-weight: 500;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--accent2); }
+.hero-stats {
+  display: flex; gap: 3rem; margin-top: 4rem; justify-content: center; flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.4s ease both;
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: var(--font-head); font-size: 28px; font-weight: 700;
+  color: var(--text);
+}
+.stat-label { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SECTIONS ───────────────────────────────────── */
+section { position: relative; z-index: 1; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+.section-pad { padding: 100px 0; }
+.section-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 1rem;
+}
+.section-title {
+  font-family: var(--font-head); font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700; line-height: 1.15; letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+}
+.section-desc { color: var(--text2); max-width: 520px; font-size: 15px; }
+
+/* ── PROCRASTINATION SECTION ────────────────────── */
+.procrast-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+  margin-top: 3rem; align-items: start;
+}
+@media(max-width:768px) { .procrast-grid { grid-template-columns: 1fr; } }
+.cycle-viz {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 2rem;
+}
+.cycle-title {
+  font-family: var(--font-head); font-size: 14px; font-weight: 600;
+  color: var(--text2); margin-bottom: 1.5rem; letter-spacing: 0.05em;
+  text-transform: uppercase; font-size: 11px;
+}
+.cycle-bar-wrap { margin-bottom: 1rem; }
+.cycle-bar-label {
+  display: flex; justify-content: space-between;
+  font-size: 12px; color: var(--text2); margin-bottom: 6px;
+}
+.cycle-bar-track {
+  height: 8px; background: var(--bg4); border-radius: 999px; overflow: hidden;
+}
+.cycle-bar-fill {
+  height: 100%; border-radius: 999px;
+  transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
+}
+.bar-burst { background: var(--teal); }
+.bar-crash { background: var(--coral); }
+.bar-recover { background: var(--amber); }
+.pattern-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.5rem; }
+.ptag {
+  font-size: 11px; padding: 4px 12px; border-radius: 999px;
+  background: var(--bg4); border: 1px solid var(--border); color: var(--text2);
+}
+.ptag.active { background: rgba(124,109,250,0.15); border-color: var(--accent); color: var(--accent2); }
+.procrast-cards { display: flex; flex-direction: column; gap: 12px; }
+.pcard {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 1.25rem;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.pcard:hover { border-color: var(--border2); transform: translateX(4px); }
+.pcard-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.pcard-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.pcard-title { font-size: 13px; font-weight: 500; }
+.pcard-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+/* ── ACADEMIC SECTION ───────────────────────────── */
+.acad-bg { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.acad-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 3rem; }
+.acad-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 1.5rem;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.acad-card:hover { border-color: var(--border2); transform: translateY(-4px); }
+.acad-icon {
+  width: 40px; height: 40px; border-radius: var(--r);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 1rem;
+}
+.acad-card h3 { font-family: var(--font-head); font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.acad-card p { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.acad-tag {
+  display: inline-block; margin-top: 12px;
+  font-size: 10px; font-weight: 500; padding: 3px 10px;
+  border-radius: 999px;
+}
+
+/* ── HEALTH SECTION ─────────────────────────────── */
+.health-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 3rem; margin-top: 3rem; align-items: start; }
+@media(max-width:768px) { .health-layout { grid-template-columns: 1fr; } }
+.health-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.hmetric {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 1.25rem;
+}
+.hmetric-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+.hmetric-value { font-family: var(--font-head); font-size: 28px; font-weight: 700; }
+.hmetric-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.hmetric-bar { height: 3px; background: var(--bg4); border-radius: 999px; margin-top: 10px; overflow: hidden; }
+.hmetric-fill { height: 100%; border-radius: 999px; }
+.correlation-box {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 1.75rem;
+}
+.correlation-box h3 { font-family: var(--font-head); font-size: 16px; font-weight: 600; margin-bottom: 0.5rem; }
+.correlation-box p { font-size: 13px; color: var(--text2); margin-bottom: 1.5rem; line-height: 1.6; }
+.insight-item {
+  display: flex; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.insight-item:last-child { border-bottom: none; }
+.insight-icon {
+  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.insight-text { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.insight-text strong { color: var(--text); font-weight: 500; display: block; margin-bottom: 2px; font-size: 13px; }
+
+/* ── SKILL SECTION ──────────────────────────────── */
+.skill-bg { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.skill-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem; margin-top: 3rem; align-items: start; }
+@media(max-width:768px) { .skill-layout { grid-template-columns: 1fr; } }
+.skill-roadmap { display: flex; flex-direction: column; gap: 0; }
+.skill-step {
+  display: flex; gap: 16px; padding-bottom: 24px; position: relative;
+}
+.skill-step::before {
+  content: ''; position: absolute; left: 15px; top: 32px;
+  width: 1px; height: calc(100% - 8px);
+  background: var(--border); z-index: 0;
+}
+.skill-step:last-child::before { display: none; }
+.step-dot {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; flex-shrink: 0; z-index: 1;
+}
+.step-content { flex: 1; }
+.step-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+.step-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.step-time { font-size: 10px; color: var(--text3); margin-top: 4px; font-family: var(--font-mono); }
+.skill-resources { display: flex; flex-direction: column; gap: 10px; }
+.resource-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 1rem 1.25rem;
+  display: flex; align-items: center; gap: 12px;
+  transition: border-color 0.2s;
+}
+.resource-card:hover { border-color: var(--border2); }
+.res-icon { font-size: 20px; flex-shrink: 0; }
+.res-title { font-size: 13px; font-weight: 500; }
+.res-type { font-size: 11px; color: var(--text3); }
+
+/* ── MINDFULNESS SECTION ────────────────────────── */
+.mind-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 3rem; }
+.mind-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 1.5rem; position: relative; overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.mind-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.mind-card:hover { transform: translateY(-4px); border-color: var(--border2); }
+.mind-card.teal::before { background: var(--teal); }
+.mind-card.coral::before { background: var(--coral); }
+.mind-card.amber::before { background: var(--amber); }
+.mind-card.pink::before { background: var(--pink); }
+.mind-card.green::before { background: var(--green); }
+.mind-card.purple::before { background: var(--accent); }
+.mind-emoji { font-size: 28px; margin-bottom: 1rem; }
+.mind-title { font-family: var(--font-head); font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.mind-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.mind-duration {
+  display: inline-block; margin-top: 12px;
+  font-size: 10px; font-family: var(--font-mono);
+  color: var(--text3); background: var(--bg4);
+  padding: 3px 10px; border-radius: 999px;
+}
+
+/* ── MOTIVATION SECTION ─────────────────────────── */
+.motive-bg { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.motive-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; }
+@media(max-width:768px) { .motive-layout { grid-template-columns: 1fr; } }
+.quote-box {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 2rem;
+  position: relative;
+}
+.quote-mark {
+  font-family: var(--font-head); font-size: 80px; font-weight: 800;
+  color: var(--accent); opacity: 0.15; line-height: 1;
+  position: absolute; top: 10px; left: 24px;
+}
+.quote-text {
+  font-family: var(--font-head); font-size: 18px; font-weight: 600;
+  line-height: 1.4; color: var(--text); position: relative; z-index: 1;
+  padding-top: 1.5rem;
+}
+.quote-author { font-size: 12px; color: var(--text3); margin-top: 1rem; font-family: var(--font-mono); }
+.quote-btn {
+  margin-top: 1.5rem; background: transparent; border: 1px solid var(--border2);
+  border-radius: var(--r); padding: 10px 20px; color: var(--text2); font-size: 13px;
+  transition: all 0.2s;
+}
+.quote-btn:hover { border-color: var(--accent); color: var(--accent2); }
+.future-viz {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 2rem;
+}
+.future-viz h3 { font-family: var(--font-head); font-size: 16px; font-weight: 600; margin-bottom: 0.5rem; }
+.future-viz p { font-size: 12px; color: var(--text2); margin-bottom: 1.5rem; }
+.future-bars { display: flex; flex-direction: column; gap: 16px; }
+.future-row { }
+.future-row-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+.future-track { height: 10px; background: var(--bg4); border-radius: 999px; overflow: hidden; position: relative; }
+.future-fill-good { height: 100%; background: var(--teal); border-radius: 999px; transition: width 2s cubic-bezier(0.4,0,0.2,1); }
+.future-fill-bad { height: 100%; background: var(--coral); border-radius: 999px; transition: width 2s 0.2s cubic-bezier(0.4,0,0.2,1); }
+.future-legend { display: flex; gap: 16px; margin-top: 16px; font-size: 11px; color: var(--text3); }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+
+/* ── TODO / DAY PLAN ────────────────────────────── */
+.plan-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; margin-top: 3rem; }
+@media(max-width:768px) { .plan-layout { grid-template-columns: 1fr; } }
+.day-plan {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 1.75rem;
+}
+.day-plan h3 { font-family: var(--font-head); font-size: 16px; font-weight: 600; margin-bottom: 1.5rem; }
+.time-slot {
+  display: flex; gap: 16px; padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.time-slot:last-child { border-bottom: none; }
+.slot-time { font-size: 11px; font-family: var(--font-mono); color: var(--text3); width: 60px; flex-shrink: 0; padding-top: 2px; }
+.slot-content { flex: 1; }
+.slot-title { font-size: 13px; font-weight: 500; }
+.slot-tag { font-size: 10px; color: var(--text3); }
+.slot-bar { height: 3px; margin-top: 8px; border-radius: 999px; }
+.todo-panel {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 1.75rem;
+}
+.todo-panel h3 { font-family: var(--font-head); font-size: 16px; font-weight: 600; margin-bottom: 1.5rem; }
+.todo-input-wrap { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+.todo-input {
+  flex: 1; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 10px 14px; color: var(--text);
+  font-family: var(--font-body); font-size: 13px; outline: none;
+  transition: border-color 0.2s;
+}
+.todo-input:focus { border-color: var(--accent); }
+.todo-add {
+  background: var(--accent); color: #fff; border: none;
+  border-radius: var(--r); padding: 10px 16px; font-size: 13px;
+  transition: opacity 0.2s;
+}
+.todo-add:hover { opacity: 0.85; }
+.todo-list { display: flex; flex-direction: column; gap: 8px; }
+.todo-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; background: var(--bg3);
+  border: 1px solid var(--border); border-radius: var(--r);
+  transition: border-color 0.2s;
+}
+.todo-item:hover { border-color: var(--border2); }
+.todo-check {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1.5px solid var(--border2); flex-shrink: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.todo-check.done { background: var(--teal); border-color: var(--teal); }
+.todo-check.done::after { content: '✓'; color: var(--bg); font-size: 10px; font-weight: 700; }
+.todo-text { font-size: 13px; flex: 1; }
+.todo-text.done { text-decoration: line-through; color: var(--text3); }
+.todo-pri { font-size: 10px; padding: 2px 8px; border-radius: 999px; }
+.pri-high { background: rgba(255,107,107,0.15); color: var(--coral); }
+.pri-med { background: rgba(251,191,36,0.15); color: var(--amber); }
+.pri-low { background: rgba(45,212,160,0.15); color: var(--teal); }
+
+/* ── BREATH TIMER ───────────────────────────────── */
+.breath-section { }
+.breath-center { text-align: center; padding: 3rem 0; }
+.breath-ring-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 2rem; }
+.breath-ring {
+  width: 200px; height: 200px; border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.breath-inner {
+  width: 140px; height: 140px; border-radius: 50%;
+  background: rgba(124,109,250,0.08);
+  border: 1px solid rgba(124,109,250,0.2);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: transform 4s ease-in-out;
+}
+.breath-inner.inhale { transform: scale(1.3); background: rgba(45,212,160,0.12); border-color: rgba(45,212,160,0.3); }
+.breath-inner.hold { transform: scale(1.3); }
+.breath-inner.exhale { transform: scale(0.85); background: rgba(124,109,250,0.06); }
+.breath-phase { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: var(--text2); }
+.breath-count { font-family: var(--font-mono); font-size: 32px; font-weight: 500; color: var(--text); }
+.breath-controls { display: flex; gap: 12px; justify-content: center; }
+.breath-btn {
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--r); padding: 12px 28px; color: var(--text); font-size: 14px;
+  transition: all 0.2s;
+}
+.breath-btn:hover { border-color: var(--accent); color: var(--accent2); }
+.breath-btn.start { background: var(--accent); border-color: var(--accent); color: #fff; }
+.breath-status { font-size: 13px; color: var(--text2); margin: 1rem 0; }
+.breath-progress {
+  width: 200px; height: 3px; background: var(--bg4);
+  border-radius: 999px; margin: 0 auto 1.5rem; overflow: hidden;
+}
+.breath-prog-fill { height: 100%; background: var(--accent); border-radius: 999px; width: 0; transition: width 0.5s linear; }
+
+/* ── GRATITUDE ──────────────────────────────────── */
+.grat-bg { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.grat-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; }
+@media(max-width:768px){ .grat-layout { grid-template-columns: 1fr; } }
+.grat-box {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 1.75rem;
+}
+.grat-box h3 { font-family: var(--font-head); font-size: 16px; font-weight: 600; margin-bottom: 0.5rem; }
+.grat-box p { font-size: 12px; color: var(--text2); margin-bottom: 1.5rem; }
+.grat-inputs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1rem; }
+.grat-input {
+  background: var(--bg4); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 10px 14px; color: var(--text);
+  font-family: var(--font-body); font-size: 13px; outline: none;
+  transition: border-color 0.2s; width: 100%;
+}
+.grat-input:focus { border-color: var(--accent); }
+.grat-submit {
+  width: 100%; background: var(--accent); color: #fff; border: none;
+  border-radius: var(--r); padding: 12px; font-size: 14px; font-weight: 500;
+  transition: opacity 0.2s;
+}
+.grat-submit:hover { opacity: 0.85; }
+.grat-log { display: flex; flex-direction: column; gap: 10px; }
+.grat-entry {
+  background: var(--bg4); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 1rem 1.25rem;
+}
+.grat-date { font-size: 10px; color: var(--text3); margin-bottom: 8px; font-family: var(--font-mono); }
+.grat-items { display: flex; flex-direction: column; gap: 4px; }
+.grat-item-text { font-size: 12px; color: var(--text2); padding-left: 12px; position: relative; }
+.grat-item-text::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+
+/* ── FOOTER ─────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border); padding: 3rem 2rem;
+  text-align: center; color: var(--text3); font-size: 13px;
+}
+footer strong { color: var(--text2); font-weight: 500; }
+
+/* ── SCROLL REVEAL ──────────────────────────────── */
+.reveal {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── RESPONSIVE NAV ─────────────────────────────── */
+@media(max-width:640px) {
+  .nav-links { display: none; }
+  .procrast-grid, .health-layout, .skill-layout, .motive-layout, .plan-layout, .grat-layout { grid-template-columns: 1fr; }
+  .health-metrics { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Student<span>OS</span></div>
+  <ul class="nav-links">
+    <li><a href="#academics">Academics</a></li>
+    <li><a href="#health">Health</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#mindful">Mindfulness</a></li>
+    <li><a href="#planner">Planner</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('planner').scrollIntoView({behavior:'smooth'})">Start Today</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    Built for college students who want more
+  </div>
+  <h1>Rise above<br/>the <span class="grad">3-day cycle</span></h1>
+  <p class="hero-sub">Your AI-powered college OS that tracks academics, health, skills, and mindset — and learns exactly where you drop off, so you never stay down.</p>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="document.getElementById('planner').scrollIntoView({behavior:'smooth'})">Plan my day</button>
+    <button class="btn-outline" onclick="document.getElementById('mindful').scrollIntoView({behavior:'smooth'})">Try mindfulness</button>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num" id="hero-stat-1">0%</div>
+      <div class="stat-label">Students procrastinate regularly</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="hero-stat-2">0</div>
+      <div class="stat-label">Avg. productive hrs lost per week</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="hero-stat-3">0x</div>
+      <div class="stat-label">Better outcomes with tracking</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCRASTINATION -->
+<section class="section-pad" id="procrastination">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Pattern Engine</div>
+      <h2 class="section-title">We know your<br/>3-day cycle</h2>
+      <p class="section-desc">You burst for 3 days, crash, guilt-scroll, and repeat. StudentOS detects the exact trigger that breaks your momentum — so you can stop the pattern before it stops you.</p>
+    </div>
+    <div class="procrast-grid reveal">
+      <div class="cycle-viz">
+        <div class="cycle-title">Your weekly energy pattern</div>
+        <div class="cycle-bar-wrap">
+          <div class="cycle-bar-label"><span>Mon–Wed burst</span><span id="burst-val">0%</span></div>
+          <div class="cycle-bar-track"><div class="cycle-bar-fill bar-burst" id="bar-burst" style="width:0%"></div></div>
+        </div>
+        <div class="cycle-bar-wrap">
+          <div class="cycle-bar-label"><span>Thu–Fri crash</span><span id="crash-val">0%</span></div>
+          <div class="cycle-bar-track"><div class="cycle-bar-fill bar-crash" id="bar-crash" style="width:0%"></div></div>
+        </div>
+        <div class="cycle-bar-wrap">
+          <div class="cycle-bar-label"><span>Weekend guilt</span><span id="recover-val">0%</span></div>
+          <div class="cycle-bar-track"><div class="cycle-bar-fill bar-recover" id="bar-recover" style="width:0%"></div></div>
+        </div>
+        <div style="margin-top:1.5rem; padding:1rem; background:rgba(124,109,250,0.08); border-radius:10px; border:1px solid rgba(124,109,250,0.15);">
+          <div style="font-size:12px; color:var(--accent2); font-weight:500; margin-bottom:4px;">AI Insight</div>
+          <div style="font-size:12px; color:var(--text2); line-height:1.6;">You tend to drop off on Thursday evenings after 3+ hours of study. Your trigger: task feels too big with no clear next step. Fix: break it into 15-min chunks.</div>
+        </div>
+        <div class="pattern-tags">
+          <span class="ptag active">Evening slump</span>
+          <span class="ptag active">Task ambiguity</span>
+          <span class="ptag">Phone distraction</span>
+          <span class="ptag">Low energy</span>
+          <span class="ptag active">Guilt loop</span>
+        </div>
+      </div>
+      <div class="procrast-cards">
+        <div class="pcard">
+          <div class="pcard-head">
+            <div class="pcard-dot" style="background:var(--teal)"></div>
+            <div class="pcard-title">Drop-off detector</div>
+          </div>
+          <p class="pcard-desc">Detects when you've been idle for 45+ min during a scheduled session and sends a soft nudge — not guilt, just a gentle pull back to the work.</p>
+        </div>
+        <div class="pcard">
+          <div class="pcard-head">
+            <div class="pcard-dot" style="background:var(--amber)"></div>
+            <div class="pcard-title">Micro-recovery plan</div>
+          </div>
+          <p class="pcard-desc">When you crash, the AI generates a 3-step 10-minute re-entry plan so starting again feels tiny, not overwhelming.</p>
+        </div>
+        <div class="pcard">
+          <div class="pcard-head">
+            <div class="pcard-dot" style="background:var(--accent)"></div>
+            <div class="pcard-title">Anti-mediocrity score</div>
+          </div>
+          <p class="pcard-desc">A live score showing how far above or below your own baseline you're performing — not compared to others, only to the best version of you.</p>
+        </div>
+        <div class="pcard">
+          <div class="pcard-head">
+            <div class="pcard-dot" style="background:var(--pink)"></div>
+            <div class="pcard-title">Streak protection</div>
+          </div>
+          <p class="pcard-desc">Earn streak shields by completing mindfulness check-ins. Use them to protect a missed day so your streak doesn't die over one bad day.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACADEMICS -->
+<section class="section-pad acad-bg" id="academics">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Academic Tracker</div>
+      <h2 class="section-title">CGPA, AMCAT,<br/>aptitude — all in one</h2>
+      <p class="section-desc">Track what actually matters for your future. Stress-weighted prioritization tells you what to work on today — not just what's due soonest.</p>
+    </div>
+    <div class="acad-grid reveal">
+      <div class="acad-card">
+        <div class="acad-icon" style="background:rgba(124,109,250,0.12)">📊</div>
+        <h3>CGPA tracker</h3>
+        <p>Track your semester GPA, predict your final CGPA based on remaining subjects, and see the minimum marks needed per exam.</p>
+        <span class="acad-tag" style="background:rgba(124,109,250,0.12); color:var(--accent2)">Live updates</span>
+      </div>
+      <div class="acad-card">
+        <div class="acad-icon" style="background:rgba(45,212,160,0.12)">🎯</div>
+        <h3>AMCAT prep planner</h3>
+        <p>AI builds a custom AMCAT study plan based on your weak areas in quantitative, verbal, and logical reasoning.</p>
+        <span class="acad-tag" style="background:rgba(45,212,160,0.12); color:var(--teal)">Adaptive</span>
+      </div>
+      <div class="acad-card">
+        <div class="acad-icon" style="background:rgba(251,191,36,0.12)">🧠</div>
+        <h3>Aptitude accelerator</h3>
+        <p>Daily 20-minute aptitude practice with difficulty that adapts to your performance. Track speed and accuracy separately.</p>
+        <span class="acad-tag" style="background:rgba(251,191,36,0.12); color:var(--amber)">Daily habit</span>
+      </div>
+      <div class="acad-card">
+        <div class="acad-icon" style="background:rgba(244,114,182,0.12)">📂</div>
+        <h3>Project milestone tracker</h3>
+        <p>Break every project into milestones. AI flags when you're falling behind before the deadline hits, not after.</p>
+        <span class="acad-tag" style="background:rgba(244,114,182,0.12); color:var(--pink)">Early warning</span>
+      </div>
+      <div class="acad-card">
+        <div class="acad-icon" style="background:rgba(74,222,128,0.12)">📚</div>
+        <h3>RDS / placement prep</h3>
+        <p>Curated resources for resume writing, data structures, and interview prep — matched to your current skill level.</p>
+        <span class="acad-tag" style="background:rgba(74,222,128,0.12); color:var(--green)">Curated</span>
+      </div>
+      <div class="acad-card">
+        <div class="acad-icon" style="background:rgba(255,107,107,0.12)">⚡</div>
+        <h3>Priority engine</h3>
+        <p>Ranks your tasks by deadline × difficulty × your current energy level. What to do now, what to defer, what to drop.</p>
+        <span class="acad-tag" style="background:rgba(255,107,107,0.12); color:var(--coral)">AI-ranked</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HEALTH -->
+<section class="section-pad" id="health">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Health Dashboard</div>
+      <h2 class="section-title">Your body tells you<br/>when the brain will fail</h2>
+      <p class="section-desc">Skin condition, sleep, energy, and mood are correlated. The AI surfaces the patterns before you crash — so you can prevent it.</p>
+    </div>
+    <div class="health-layout reveal">
+      <div class="health-metrics">
+        <div class="hmetric">
+          <div class="hmetric-label">Sleep</div>
+          <div class="hmetric-value" style="color:var(--teal)">6.5h</div>
+          <div class="hmetric-sub">↑ 0.5h vs last week</div>
+          <div class="hmetric-bar"><div class="hmetric-fill" style="width:65%; background:var(--teal)"></div></div>
+        </div>
+        <div class="hmetric">
+          <div class="hmetric-label">Energy</div>
+          <div class="hmetric-value" style="color:var(--amber)">7/10</div>
+          <div class="hmetric-sub">Moderate today</div>
+          <div class="hmetric-bar"><div class="hmetric-fill" style="width:70%; background:var(--amber)"></div></div>
+        </div>
+        <div class="hmetric">
+          <div class="hmetric-label">Skin health</div>
+          <div class="hmetric-value" style="color:var(--pink)">Fair</div>
+          <div class="hmetric-sub">Stress spike detected</div>
+          <div class="hmetric-bar"><div class="hmetric-fill" style="width:50%; background:var(--pink)"></div></div>
+        </div>
+        <div class="hmetric">
+          <div class="hmetric-label">Hydration</div>
+          <div class="hmetric-value" style="color:var(--accent)">1.8L</div>
+          <div class="hmetric-sub">↓ below target</div>
+          <div class="hmetric-bar"><div class="hmetric-fill" style="width:45%; background:var(--accent)"></div></div>
+        </div>
+        <div class="hmetric">
+          <div class="hmetric-label">Mood</div>
+          <div class="hmetric-value" style="color:var(--green)">Good</div>
+          <div class="hmetric-sub">Consistent 3 days</div>
+          <div class="hmetric-bar"><div class="hmetric-fill" style="width:78%; background:var(--green)"></div></div>
+        </div>
+        <div class="hmetric">
+          <div class="hmetric-label">Focus score</div>
+          <div class="hmetric-value" style="color:var(--coral)">64%</div>
+          <div class="hmetric-sub">↓ low hydration linked</div>
+          <div class="hmetric-bar"><div class="hmetric-fill" style="width:64%; background:var(--coral)"></div></div>
+        </div>
+      </div>
+      <div class="correlation-box">
+        <h3>AI health correlations</h3>
+        <p>Patterns the AI found in your last 30 days</p>
+        <div class="insight-item">
+          <div class="insight-icon" style="background:rgba(45,212,160,0.12)">💤</div>
+          <div class="insight-text">
+            <strong>Sleep → Focus link</strong>
+            When sleep drops below 6h, your focus score drops 34% the next day. Your best study days follow 7h+ nights.
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-icon" style="background:rgba(244,114,182,0.12)">🌿</div>
+          <div class="insight-text">
+            <strong>Skin → Stress signal</strong>
+            Skin flare-ups appear 2 days after exam-week stress peaks. Detected before you consciously feel stressed.
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-icon" style="background:rgba(251,191,36,0.12)">💧</div>
+          <div class="insight-text">
+            <strong>Hydration → Mood</strong>
+            On days you drink under 1.5L, mood ratings drop by an average of 1.8 points. A simple fix for a big lift.
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-icon" style="background:rgba(124,109,250,0.12)">🏃</div>
+          <div class="insight-text">
+            <strong>Movement → Productivity</strong>
+            20-min walks on weekdays correlate with 41% more tasks completed in the following 2 hours.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="section-pad skill-bg" id="skills">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Skill Roadmap</div>
+      <h2 class="section-title">20 min a day builds<br/>a career in a year</h2>
+      <p class="section-desc">Gap analysis between where you are and where you want to be. Curated micro-learning — 20 minutes daily — with free resources and streak tracking.</p>
+    </div>
+    <div class="skill-layout reveal">
+      <div>
+        <div style="font-size:12px; color:var(--text3); margin-bottom:1.5rem; font-family:var(--font-mono)">YOUR ROADMAP — Software Developer track</div>
+        <div class="skill-roadmap">
+          <div class="skill-step">
+            <div class="step-dot" style="background:rgba(45,212,160,0.15); color:var(--teal); border:1px solid var(--teal)">✓</div>
+            <div class="step-content">
+              <div class="step-title">Data structures & algorithms</div>
+              <div class="step-desc">Arrays, linked lists, trees, graphs. 80 problems solved.</div>
+              <div class="step-time">COMPLETED · 6 weeks</div>
+            </div>
+          </div>
+          <div class="skill-step">
+            <div class="step-dot" style="background:rgba(124,109,250,0.2); color:var(--accent2); border:1px solid var(--accent)">2</div>
+            <div class="step-content">
+              <div class="step-title">System design basics</div>
+              <div class="step-desc">Load balancing, caching, databases. You're here — 3 weeks in.</div>
+              <div class="step-time">IN PROGRESS · Week 3/5</div>
+            </div>
+          </div>
+          <div class="skill-step">
+            <div class="step-dot" style="background:var(--bg4); color:var(--text3); border:1px solid var(--border)">3</div>
+            <div class="step-content">
+              <div class="step-title">DBMS & SQL mastery</div>
+              <div class="step-desc">Joins, indexing, normalization, query optimization.</div>
+              <div class="step-time">NEXT · ~4 weeks</div>
+            </div>
+          </div>
+          <div class="skill-step">
+            <div class="step-dot" style="background:var(--bg4); color:var(--text3); border:1px solid var(--border)">4</div>
+            <div class="step-content">
+              <div class="step-title">Full-stack project</div>
+              <div class="step-desc">Build and deploy a complete project for your portfolio.</div>
+              <div class="step-time">UPCOMING</div>
+            </div>
+          </div>
+          <div class="skill-step">
+            <div class="step-dot" style="background:var(--bg4); color:var(--text3); border:1px solid var(--border)">5</div>
+            <div class="step-content">
+              <div class="step-title">Mock interview prep</div>
+              <div class="step-desc">Behavioral + technical. Resume review. Placement ready.</div>
+              <div class="step-time">FINAL STAGE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px; color:var(--text3); margin-bottom:1.5rem; font-family:var(--font-mono)">FREE RESOURCES — curated for your stage</div>
+        <div class="skill-resources">
+          <div class="resource-card">
+            <div class="res-icon">▶</div>
+            <div>
+              <div class="res-title">Striver's SDE sheet</div>
+              <div class="res-type">YouTube · 180 problems · Free</div>
+            </div>
+          </div>
+          <div class="resource-card">
+            <div class="res-icon">📖</div>
+            <div>
+              <div class="res-title">System Design Primer</div>
+              <div class="res-type">GitHub · 220k stars · Free</div>
+            </div>
+          </div>
+          <div class="resource-card">
+            <div class="res-icon">💻</div>
+            <div>
+              <div class="res-title">LeetCode daily problem</div>
+              <div class="res-type">Platform · AI-matched difficulty</div>
+            </div>
+          </div>
+          <div class="resource-card">
+            <div class="res-icon">🎓</div>
+            <div>
+              <div class="res-title">NPTEL DBMS course</div>
+              <div class="res-type">IIT lectures · Certificate eligible</div>
+            </div>
+          </div>
+          <div class="resource-card">
+            <div class="res-icon">📝</div>
+            <div>
+              <div class="res-title">IndiaBix aptitude sets</div>
+              <div class="res-type">AMCAT prep · Timed practice</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MINDFULNESS -->
+<section class="section-pad" id="mindful">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Mindful Activities</div>
+      <h2 class="section-title">Keep the brain<br/>lighter every day</h2>
+      <p class="section-desc">Not decoration — these activities are scientifically positioned to reduce cognitive fatigue, prevent the crash cycle, and reset your focus when it matters.</p>
+    </div>
+    <div class="mind-grid reveal">
+      <div class="mind-card teal">
+        <div class="mind-emoji">🌬️</div>
+        <div class="mind-title">4-7-8 breath timer</div>
+        <p class="mind-desc">Inhale 4s, hold 7s, exhale 8s. Activates the parasympathetic nervous system and drops cortisol in under 4 minutes. Auto-triggers after 90-min study blocks.</p>
+        <span class="mind-duration">4 min · Anytime</span>
+      </div>
+      <div class="mind-card purple">
+        <div class="mind-emoji">🧠</div>
+        <div class="mind-title">Brain dump journal</div>
+        <p class="mind-desc">30-second voice or text dump before starting work. Clears background anxiety from working memory so your full cognitive bandwidth goes to the task.</p>
+        <span class="mind-duration">2 min · Pre-session</span>
+      </div>
+      <div class="mind-card amber">
+        <div class="mind-emoji">⭐</div>
+        <div class="mind-title">Daily intention setter</div>
+        <p class="mind-desc">One question every morning: "What would make today feel successful?" Sets a meaningful anchor — not a task list. Prevents the overwhelm spiral before it starts.</p>
+        <span class="mind-duration">1 min · Morning</span>
+      </div>
+      <div class="mind-card green">
+        <div class="mind-emoji">🌿</div>
+        <div class="mind-title">Nature micro-break</div>
+        <p class="mind-desc">Step outside or look at something green for 5 minutes. Proven to restore directed attention better than social media scrolling. Scheduled into your day plan automatically.</p>
+        <span class="mind-duration">5 min · Midday</span>
+      </div>
+      <div class="mind-card pink">
+        <div class="mind-emoji">🌸</div>
+        <div class="mind-title">Gratitude micro-log</div>
+        <p class="mind-desc">3 things in 60 seconds every evening. The AI tracks themes over time and shows what energizes vs. drains you — building self-awareness quietly in the background.</p>
+        <span class="mind-duration">1 min · Evening</span>
+      </div>
+      <div class="mind-card coral">
+        <div class="mind-emoji">🎵</div>
+        <div class="mind-title">Adaptive focus mode</div>
+        <p class="mind-desc">Pomodoro timer with AI-selected ambient background — rain, cafe, lo-fi, white noise — matched to your task type and current energy level, not just a random playlist.</p>
+        <span class="mind-duration">25 min · Study sessions</span>
+      </div>
+    </div>
+
+    <!-- BREATH TIMER INTERACTIVE -->
+    <div class="reveal" style="margin-top:3rem;">
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:var(--r2); padding:2.5rem; max-width:500px; margin:0 auto; text-align:center;">
+        <div style="font-size:13px; color:var(--text3); margin-bottom:1.5rem; font-family:var(--font-mono)">TRY IT NOW — 4-7-8 breathing</div>
+        <div class="breath-ring-wrap">
+          <div class="breath-ring">
+            <div class="breath-inner" id="breathInner">
+              <div class="breath-phase" id="breathPhase">Ready</div>
+              <div class="breath-count" id="breathCount">—</div>
+            </div>
+          </div>
+        </div>
+        <div class="breath-progress"><div class="breath-prog-fill" id="breathProg"></div></div>
+        <div class="breath-status" id="breathStatus">Press start when you're ready. Close your eyes.</div>
+        <div class="breath-controls">
+          <button class="breath-btn start" id="breathStart" onclick="startBreath()">Start breathing</button>
+          <button class="breath-btn" onclick="resetBreath()">Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MOTIVATION -->
+<section class="section-pad motive-bg" id="motivation">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Daily Motivation</div>
+      <h2 class="section-title">Not generic quotes.<br/>Your story, your push.</h2>
+      <p class="section-desc">Motivation that reads your behavioral history and tells you exactly what you need to hear today — not a wall poster.</p>
+    </div>
+    <div class="motive-layout reveal">
+      <div class="quote-box">
+        <div class="quote-mark">"</div>
+        <div class="quote-text" id="quoteText">You stopped exactly here last week. This Thursday, you go one step further. The gap between who you are and who you could be is just one consistent day.</div>
+        <div class="quote-author" id="quoteAuthor">— Your AI coach · Based on your last 7 days</div>
+        <button class="quote-btn" onclick="newQuote()">New insight</button>
+      </div>
+      <div class="future-viz">
+        <h3>Your 90-day projection</h3>
+        <p>Two futures based on your current pattern vs. consistent daily habits.</p>
+        <div class="future-bars">
+          <div class="future-row">
+            <div class="future-row-label"><span>CGPA projection</span><span style="color:var(--text3); font-family:var(--font-mono); font-size:11px">consistent 8.4 vs current 7.1</span></div>
+            <div class="future-track"><div class="future-fill-good" id="cgpaGood" style="width:0%"></div></div>
+            <div class="future-track" style="margin-top:4px"><div class="future-fill-bad" id="cgpaBad" style="width:0%"></div></div>
+          </div>
+          <div class="future-row">
+            <div class="future-row-label"><span>Skills acquired</span><span style="color:var(--text3); font-family:var(--font-mono); font-size:11px">8 vs 3 skills</span></div>
+            <div class="future-track"><div class="future-fill-good" id="skillGood" style="width:0%"></div></div>
+            <div class="future-track" style="margin-top:4px"><div class="future-fill-bad" id="skillBad" style="width:0%"></div></div>
+          </div>
+          <div class="future-row">
+            <div class="future-row-label"><span>Health score</span><span style="color:var(--text3); font-family:var(--font-mono); font-size:11px">82% vs 54%</span></div>
+            <div class="future-track"><div class="future-fill-good" id="healthGood" style="width:0%"></div></div>
+            <div class="future-track" style="margin-top:4px"><div class="future-fill-bad" id="healthBad" style="width:0%"></div></div>
+          </div>
+        </div>
+        <div class="future-legend">
+          <span><span class="legend-dot" style="background:var(--teal)"></span>Consistent path</span>
+          <span><span class="legend-dot" style="background:var(--coral)"></span>Current pattern</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANNER / TODO -->
+<section class="section-pad" id="planner">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Daily Planner</div>
+      <h2 class="section-title">Your AI-built day,<br/>ready before you wake</h2>
+      <p class="section-desc">The AI reads your energy pattern, upcoming deadlines, and mindfulness needs — and builds your optimal day schedule automatically.</p>
+    </div>
+    <div class="plan-layout reveal">
+      <div class="day-plan">
+        <h3>Today's plan — <span style="color:var(--text2); font-weight:400; font-size:14px" id="todayDate"></span></h3>
+        <div class="time-slot">
+          <div class="slot-time">6:30 AM</div>
+          <div class="slot-content">
+            <div class="slot-title">Morning intention + gratitude</div>
+            <div class="slot-tag">Mindfulness · 5 min</div>
+            <div class="slot-bar" style="width:20%; background:var(--teal)"></div>
+          </div>
+        </div>
+        <div class="time-slot">
+          <div class="slot-time">7:00 AM</div>
+          <div class="slot-content">
+            <div class="slot-title">LeetCode daily problem</div>
+            <div class="slot-tag">Skills · 30 min · Medium difficulty</div>
+            <div class="slot-bar" style="width:60%; background:var(--accent)"></div>
+          </div>
+        </div>
+        <div class="time-slot">
+          <div class="slot-time">9:00 AM</div>
+          <div class="slot-content">
+            <div class="slot-title">System design study — Caching</div>
+            <div class="slot-tag">Academics · 90 min deep work</div>
+            <div class="slot-bar" style="width:100%; background:var(--blue,var(--accent2))"></div>
+          </div>
+        </div>
+        <div class="time-slot">
+          <div class="slot-time">10:30 AM</div>
+          <div class="slot-content">
+            <div class="slot-title">4-7-8 breath + nature break</div>
+            <div class="slot-tag">Mindfulness · 10 min recovery</div>
+            <div class="slot-bar" style="width:20%; background:var(--teal)"></div>
+          </div>
+        </div>
+        <div class="time-slot">
+          <div class="slot-time">2:00 PM</div>
+          <div class="slot-content">
+            <div class="slot-title">DBMS revision + practice</div>
+            <div class="slot-tag">Academics · 60 min · High priority</div>
+            <div class="slot-bar" style="width:80%; background:var(--coral)"></div>
+          </div>
+        </div>
+        <div class="time-slot">
+          <div class="slot-time">5:00 PM</div>
+          <div class="slot-content">
+            <div class="slot-title">Aptitude — 10 quant problems</div>
+            <div class="slot-tag">Skills · 20 min · AMCAT prep</div>
+            <div class="slot-bar" style="width:40%; background:var(--amber)"></div>
+          </div>
+        </div>
+        <div class="time-slot">
+          <div class="slot-time">9:30 PM</div>
+          <div class="slot-content">
+            <div class="slot-title">Evening gratitude log + wind down</div>
+            <div class="slot-tag">Mindfulness · 5 min</div>
+            <div class="slot-bar" style="width:15%; background:var(--pink)"></div>
+          </div>
+        </div>
+      </div>
+      <div class="todo-panel">
+        <h3>To-do list</h3>
+        <div class="todo-input-wrap">
+          <input class="todo-input" type="text" id="todoInput" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTodo()"/>
+          <button class="todo-add" onclick="addTodo()">Add</button>
+        </div>
+        <div class="todo-list" id="todoList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GRATITUDE -->
+<section class="section-pad grat-bg" id="gratitude">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Gratitude & Reflection</div>
+      <h2 class="section-title">60 seconds every evening.<br/>Compounding slowly.</h2>
+      <p class="section-desc">Gratitude journaling rewires how your brain scans for threats vs. opportunities. The AI tracks themes over time and reflects your growth back to you.</p>
+    </div>
+    <div class="grat-layout reveal">
+      <div class="grat-box">
+        <h3>Today's gratitude log</h3>
+        <p>Three things — big or tiny — that happened today.</p>
+        <div class="grat-inputs">
+          <input class="grat-input" type="text" id="grat1" placeholder="I'm grateful for..."/>
+          <input class="grat-input" type="text" id="grat2" placeholder="Something good that happened..."/>
+          <input class="grat-input" type="text" id="grat3" placeholder="One person who helped me..."/>
+        </div>
+        <button class="grat-submit" onclick="saveGratitude()">Save today's entry</button>
+      </div>
+      <div class="grat-box">
+        <h3>Past entries</h3>
+        <p>Your gratitude history — patterns emerge over weeks.</p>
+        <div class="grat-log" id="gratLog">
+          <div class="grat-entry">
+            <div class="grat-date">Yesterday · Apr 24, 2026</div>
+            <div class="grat-items">
+              <div class="grat-item-text">Finished the system design chapter without procrastinating</div>
+              <div class="grat-item-text">A friend helped me debug my code for an hour</div>
+              <div class="grat-item-text">Slept 7 hours and felt the difference</div>
+            </div>
+          </div>
+          <div class="grat-entry">
+            <div class="grat-date">Apr 23, 2026</div>
+            <div class="grat-items">
+              <div class="grat-item-text">Got a good score on the DBMS quiz</div>
+              <div class="grat-item-text">Remembered to drink enough water today</div>
+              <div class="grat-item-text">Had a good conversation with my professor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div style="margin-bottom:8px;">
+    <strong>StudentOS</strong> — built for college students who refuse mediocrity
+  </div>
+  <div>Track · Reflect · Rise</div>
+</footer>
+
+<script>
+/* ── SCROLL REVEAL ── */
+const reveals = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); } });
+}, { threshold: 0.12 });
+reveals.forEach(r => obs.observe(r));
+
+/* ── HERO STATS COUNTER ── */
+function countUp(id, target, suffix, duration) {
+  const el = document.getElementById(id);
+  const start = Date.now();
+  const tick = () => {
+    const p = Math.min((Date.now()-start)/duration, 1);
+    const val = Math.round(p * target);
+    el.textContent = val + suffix;
+    if(p < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+setTimeout(() => {
+  countUp('hero-stat-1', 92, '%', 1800);
+  countUp('hero-stat-2', 18, '', 1800);
+  countUp('hero-stat-3', 3, 'x', 1800);
+}, 600);
+
+/* ── PROCRASTINATION BARS ── */
+function animateBars() {
+  setTimeout(() => {
+    document.getElementById('bar-burst').style.width = '82%';
+    document.getElementById('burst-val').textContent = '82%';
+    document.getElementById('bar-crash').style.width = '28%';
+    document.getElementById('crash-val').textContent = '28%';
+    document.getElementById('bar-recover').style.width = '45%';
+    document.getElementById('recover-val').textContent = '45%';
+  }, 400);
+}
+const barsObs = new IntersectionObserver((entries) => {
+  if(entries[0].isIntersecting) { animateBars(); barsObs.disconnect(); }
+}, {threshold:0.3});
+const barsEl = document.getElementById('bar-burst');
+if(barsEl) barsObs.observe(barsEl.closest('.cycle-viz'));
+
+/* ── FUTURE VIZ BARS ── */
+const futureObs = new IntersectionObserver((entries) => {
+  if(entries[0].isIntersecting) {
+    setTimeout(() => {
+      document.getElementById('cgpaGood').style.width = '84%';
+      document.getElementById('cgpaBad').style.width = '71%';
+      document.getElementById('skillGood').style.width = '80%';
+      document.getElementById('skillBad').style.width = '30%';
+      document.getElementById('healthGood').style.width = '82%';
+      document.getElementById('healthBad').style.width = '54%';
+    }, 300);
+    futureObs.disconnect();
+  }
+}, {threshold:0.3});
+const futEl = document.getElementById('cgpaGood');
+if(futEl) futureObs.observe(futEl.closest('.future-viz'));
+
+/* ── QUOTE ROTATION ── */
+const quotes = [
+  { text: "You stopped exactly here last week. This Thursday, you go one step further. The gap between who you are and who you could be is just one consistent day.", author: "Your AI coach · Based on your last 7 days" },
+  { text: "Mediocrity is not a destination — it's a default. Every single person who ever made you look up to them just refused to stop when it got uncomfortable.", author: "Pattern insight · 3-day burst detected" },
+  { text: "Your CGPA is not your ceiling. Your consistency is. And unlike talent, consistency is something you can choose to switch on right now.", author: "Academic tracker · Today's insight" },
+  { text: "Sleep well tonight. The version of you that shows up tomorrow will thank the version that put the phone down tonight.", author: "Health correlator · Sleep below 6.5h" },
+  { text: "The skill you skip today is the interview question you can't answer in six months. 20 minutes. Every single day. That's all it takes.", author: "Skill tracker · System design week 3" },
+];
+let qIdx = 0;
+function newQuote() {
+  qIdx = (qIdx + 1) % quotes.length;
+  const q = quotes[qIdx];
+  const el = document.getElementById('quoteText');
+  el.style.opacity = '0';
+  setTimeout(() => {
+    el.textContent = q.text;
+    document.getElementById('quoteAuthor').textContent = '— ' + q.author;
+    el.style.opacity = '1';
+    el.style.transition = 'opacity 0.4s';
+  }, 200);
+}
+
+/* ── TODAY DATE ── */
+const dateEl = document.getElementById('todayDate');
+if(dateEl) {
+  const d = new Date();
+  dateEl.textContent = d.toLocaleDateString('en-IN', { weekday:'long', month:'long', day:'numeric' });
+}
+
+/* ── TODO ── */
+const defaultTodos = [
+  { text: 'Complete LeetCode daily problem', priority: 'high', done: false },
+  { text: 'Read 1 chapter — System Design Primer', priority: 'high', done: false },
+  { text: 'Drink 2.5L water today', priority: 'med', done: true },
+  { text: '10 AMCAT aptitude questions', priority: 'med', done: false },
+  { text: 'Evening gratitude log', priority: 'low', done: false },
+];
+let todos = [...defaultTodos];
+function renderTodos() {
+  const list = document.getElementById('todoList');
+  list.innerHTML = todos.map((t, i) => `
+    <div class="todo-item">
+      <div class="todo-check ${t.done?'done':''}" onclick="toggleTodo(${i})"></div>
+      <div class="todo-text ${t.done?'done':''}">${t.text}</div>
+      <span class="todo-pri pri-${t.priority}">${t.priority}</span>
+    </div>
+  `).join('');
+}
+function toggleTodo(i) { todos[i].done = !todos[i].done; renderTodos(); }
+function addTodo() {
+  const input = document.getElementById('todoInput');
+  const val = input.value.trim();
+  if(!val) return;
+  todos.unshift({ text: val, priority: 'med', done: false });
+  input.value = '';
+  renderTodos();
+}
+renderTodos();
+
+/* ── BREATH TIMER ── */
+let breathInterval = null;
+let breathRunning = false;
+const phases = [
+  { name: 'Inhale', duration: 4, cls: 'inhale' },
+  { name: 'Hold', duration: 7, cls: 'hold' },
+  { name: 'Exhale', duration: 8, cls: 'exhale' },
+];
+let phaseIdx = 0, countdown = 4, cycleCount = 0;
+function startBreath() {
+  if(breathRunning) return;
+  breathRunning = true;
+  document.getElementById('breathStart').disabled = true;
+  document.getElementById('breathStart').style.opacity = '0.5';
+  runPhase();
+}
+function runPhase() {
+  if(!breathRunning) return;
+  const phase = phases[phaseIdx];
+  countdown = phase.duration;
+  const inner = document.getElementById('breathInner');
+  inner.className = 'breath-inner ' + phase.cls;
+  document.getElementById('breathPhase').textContent = phase.name;
+  document.getElementById('breathCount').textContent = countdown;
+  document.getElementById('breathStatus').textContent = phase.name === 'Inhale' ? 'Breathe in slowly through your nose...' : phase.name === 'Hold' ? 'Hold gently... stay still...' : 'Release slowly through your mouth...';
+  const total = phase.duration;
+  clearInterval(breathInterval);
+  breathInterval = setInterval(() => {
+    countdown--;
+    document.getElementById('breathCount').textContent = countdown;
+    const prog = ((total - countdown) / total) * 100;
+    document.getElementById('breathProg').style.width = prog + '%';
+    if(countdown <= 0) {
+      clearInterval(breathInterval);
+      phaseIdx = (phaseIdx + 1) % 3;
+      if(phaseIdx === 0) cycleCount++;
+      if(cycleCount >= 4) { finishBreath(); return; }
+      setTimeout(runPhase, 300);
+    }
+  }, 1000);
+}
+function finishBreath() {
+  breathRunning = false;
+  document.getElementById('breathPhase').textContent = 'Done';
+  document.getElementById('breathCount').textContent = '✓';
+  document.getElementById('breathStatus').textContent = '4 cycles complete. Well done. Notice how you feel.';
+  document.getElementById('breathInner').className = 'breath-inner';
+  document.getElementById('breathProg').style.width = '100%';
+}
+function resetBreath() {
+  clearInterval(breathInterval);
+  breathRunning = false; phaseIdx = 0; countdown = 4; cycleCount = 0;
+  document.getElementById('breathInner').className = 'breath-inner';
+  document.getElementById('breathPhase').textContent = 'Ready';
+  document.getElementById('breathCount').textContent = '—';
+  document.getElementById('breathStatus').textContent = 'Press start when you\'re ready. Close your eyes.';
+  document.getElementById('breathProg').style.width = '0%';
+  const btn = document.getElementById('breathStart');
+  btn.disabled = false; btn.style.opacity = '1';
+}
+
+/* ── GRATITUDE ── */
+function saveGratitude() {
+  const g1 = document.getElementById('grat1').value.trim();
+  const g2 = document.getElementById('grat2').value.trim();
+  const g3 = document.getElementById('grat3').value.trim();
+  if(!g1 && !g2 && !g3) return;
+  const log = document.getElementById('gratLog');
+  const today = new Date().toLocaleDateString('en-IN', { weekday:'long', month:'short', day:'numeric', year:'numeric' });
+  const items = [g1, g2, g3].filter(Boolean);
+  const entry = document.createElement('div');
+  entry.className = 'grat-entry';
+  entry.innerHTML = `<div class="grat-date">Today · ${today}</div><div class="grat-items">${items.map(i=>`<div class="grat-item-text">${i}</div>`).join('')}</div>`;
+  log.insertBefore(entry, log.firstChild);
+  ['grat1','grat2','grat3'].forEach(id => document.getElementById(id).value = '');
+}
+</script>
+<script>
+  const API_BASE = "http://127.0.0.1:8000";
+</script>
+</body>
+</html>
